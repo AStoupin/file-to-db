@@ -16,18 +16,16 @@
     </route>
 
 
-    <route customId="true" id="Row-parse-and-store" description=" Parse a line and stor into DB " >
+    <route customId="true" id="Row-parse-and-store" description=" Parse a line and store into DB " >
 
 	  	<from uri="direct:line"/>
-        <unmarshal ref="beanio"/>  
-
-		<to uri="sql:SELECT CLIENTS_DET_SEQ.NEXTVAL AS SEQVAL FROM DUAL?outputHeader=CliId&amp;outputType=SelectOne"/>
-        <log message="...Store ClientDetailID = ${header[CliId]} :#${body.get(0)[Family_cyr]} ${body.get(0)[DocNum]} ${body.get(0)[DocSer]}"/>
+        <to uri="dataformat:beanio:unmarshal?mapping=file:mappings/mappings.xml&amp;streamName=product&amp;encoding=UTF-8"/>
+        
+		<to uri="sql:SELECT PRODUCT_SEQ.NEXTVAL AS SEQVAL FROM DUAL?outputHeader=productId&amp;outputType=SelectOne"/>
+        <log message="...Store productId = ${header[productId]} ${body.get(0)[id]} ${body.get(0)[name]}"/>
 
          
-        <to uri="sql:INSERT INTO CLIENTS_DETAILS(ID, SOURCE_DB_ID, REASON_ID, DATE_INCLUSION_SOURCE_DB, DATE_REASON_PRESENCE, SURNAME, FIRSTNAME, PATRONYMIC, YEAROFBIRTH, PASSPORT_SERIES,PASSPORT_NUMBER) 
-		          values (:#${header[CliId]}, 387, 5851, SYSDATE, SYSDATE, :#${body.get(0)[Family_cyr]}, :#${body.get(0)[Name_cyr]}, :#${body.get(0)[Patronymic_cyr]}, :#${body.get(0)[BirthYear]}, :#${body.get(0)[DocNum]}, :#${body.get(0)[DocSer]})"/>
-        <to uri="sql:INSERT INTO CLIENTS(ID,ID_CLIENT_DETAIL,SOURCE_DB_ID, REASON_ID, DATE_INCLUSION_SOURCE_DB,DATE_REASON_PRESENCE) values (CLIENTS_KEY_SEQ.NEXTVAL, :#${header[CliId]}, 387, 5851, SYSDATE, SYSDATE)"/>
+        <to uri="sql:INSERT INTO PRODUCT(ID, NAME) values (:#${header[productId], :#${body.get(0)[name]})"/>
 
     </route>
 

@@ -3,19 +3,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
 
-  <stream name="passport" format="csv" >
+  <stream name="product" format="csv" >
     <parser>
       <property name="delimiter" value=";" />
     </parser>
-     <record name="passportItem"  class="map" minOccurs="1" maxOccurs="unbounded">
-	  <field name="Family_cyr"/>
-	  <field name="Name_cyr"/>
-	  <field name="Patronymic_cyr"/>
-	  <field name="FIO_lat"/>
-	  <field name="BirthDate"/>
-      <field name="BirthYear"/>
-	  <field name="DocNum"/>
-	  <field name="DocSer"/>
+     <record name="productItem"  class="map" minOccurs="1" maxOccurs="unbounded">
+	  <field name="id"/>
+	  <field name="name"/>
      </record>
   </stream>
 </beanio>

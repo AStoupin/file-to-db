@@ -8,12 +8,7 @@
 
 
 	 
-    
-	<bean id="beanio" class="org.apache.camel.dataformat.beanio.BeanIODataFormat">
-	  <constructor-arg name="mapping" value="${mappingFile}" />
-	  <constructor-arg name="streamName" value="${mappingStreamName}" />
-	  <property name="encoding" value = "UTF-8"/> 
-	</bean>
+
 
 
 
