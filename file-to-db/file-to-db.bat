@@ -1,0 +1,1 @@
+java -Dfile.encoding=UTF-8 -jar file-to-db-0.0.1-SNAPSHOT.jar

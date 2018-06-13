@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://camel.apache.org/schema/spring" description="File to DB route">
+
+    <route customId="true" id="File-split-by-rows" description=" Proccess a *.csv file and split it line by line" >
+	  <from uri="file://input?include=.*\.csv" description=" check every 10 secs"/>
+	  	
+	    <log message="Start proccess ${headers.CamelFileHost} /  ${header.CamelFileAbsolutePath}" /> 
+	    
+   		<split id="LineItemSplitter" streaming="true">
+   			<tokenize token="\r\n"  /> 
+ 		 	<log message="...Proccess ${header.CamelSplitIndex} of ${header.CamelSplitSize}" /> 
+            <to uri="direct:line"/>
+         </split>
+
+		 <log message="Finish proccess ${headers.CamelFileHost} /  ${header.CamelFileAbsolutePath}" /> 
+    </route>
+
+
+    <route customId="true" id="Row-parse-and-store" description=" Parse a line and stor into DB " >
+
+	  	<from uri="direct:line"/>
+        <unmarshal ref="beanio"/>  
+
+		<to uri="sql:SELECT CLIENTS_DET_SEQ.NEXTVAL AS SEQVAL FROM DUAL?outputHeader=CliId&amp;outputType=SelectOne"/>
+        <log message="...Store ClientDetailID = ${header[CliId]} :#${body.get(0)[Family_cyr]} ${body.get(0)[DocNum]} ${body.get(0)[DocSer]}"/>
+
+         
+        <to uri="sql:INSERT INTO CLIENTS_DETAILS(ID, SOURCE_DB_ID, REASON_ID, DATE_INCLUSION_SOURCE_DB, DATE_REASON_PRESENCE, SURNAME, FIRSTNAME, PATRONYMIC, YEAROFBIRTH, PASSPORT_SERIES,PASSPORT_NUMBER) 
+		          values (:#${header[CliId]}, 387, 5851, SYSDATE, SYSDATE, :#${body.get(0)[Family_cyr]}, :#${body.get(0)[Name_cyr]}, :#${body.get(0)[Patronymic_cyr]}, :#${body.get(0)[BirthYear]}, :#${body.get(0)[DocNum]}, :#${body.get(0)[DocSer]})"/>
+        <to uri="sql:INSERT INTO CLIENTS(ID,ID_CLIENT_DETAIL,SOURCE_DB_ID, REASON_ID, DATE_INCLUSION_SOURCE_DB,DATE_REASON_PRESENCE) values (CLIENTS_KEY_SEQ.NEXTVAL, :#${header[CliId]}, 387, 5851, SYSDATE, SYSDATE)"/>
+
+    </route>
+
+</routes>
